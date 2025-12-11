@@ -40,6 +40,11 @@ export class MIDIMapper {
         const scale = this.mapVelocityToScale(midiEvent.velocity);
         const length = this.mapVelocityToLength(midiEvent.velocity);
 
+        // Use a per-channel color if defined, otherwise fall back to entity/theme color
+        const channelColor = this.getColorForChannel(midiEvent.channel);
+        const fallbackColor = this.getColorForType(entityType, theme);
+        const color = channelColor || fallbackColor;
+
         return {
             time: midiEvent.time,
             type: entityType,
@@ -49,8 +54,15 @@ export class MIDIMapper {
             y: y,
             scale: scale,
             length: length,
-            color: this.getColorForType(entityType, theme)
+            color: color
         };
+    }
+
+    getColorForChannel(channel) {
+        if (this.rules && this.rules.channelColors && this.rules.channelColors[channel] ) {
+            return this.rules.channelColors[channel];
+        }
+        return null;
     }
 
     mapPitchToY(note) {
@@ -80,7 +92,8 @@ export class MIDIMapper {
             case 'enemy':
                 return theme.accent;
             case 'background':
-                return theme.fg + '20'; // Add alpha
+                // ensure background alpha if theme.fg provided as hex
+                return (theme.fg || '#000') + '20'; // Add alpha
             default:
                 return '#000';
         }

@@ -19,6 +19,26 @@ export const MAPPING_RULES = {
         15: 'background'
     },
 
+    // Per-channel distinct colors (one color per MIDI channel 0-15)
+    channelColors: {
+        0: '#2e7d32',  // dark green - primary melody
+        1: '#c62828',  // red - obstacles
+        2: '#1565c0',  // blue - bass/background
+        3: '#ef6c00',  // orange - enemies
+        4: '#6a1b9a',  // purple
+        5: '#009688',  // teal
+        6: '#ad1457',  // pink
+        7: '#ff8f00',  // amber
+        8: '#2b2b2b',  // charcoal
+        9: '#8d6e63',  // brown (percussion)
+        10: '#43a047',
+        11: '#1e88e5',
+        12: '#f4511e',
+        13: '#7b1fa2',
+        14: '#00acc1',
+        15: '#bf360c'
+    },
+
     // Pitch ranges for vertical placement (MIDI note 0-127)
     pitchToY: {
         min: 36,  // C2
