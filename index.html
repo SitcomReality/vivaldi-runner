@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Vivaldi Runner</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            background: #000;
+            font-family: 'Space Mono', monospace;
+            touch-action: none;
+        }
+        
+        #game-canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+        
+        #menu {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+        }
+        
+        #menu.hidden {
+            display: none;
+        }
+        
+        .menu-title {
+            color: #fff;
+            font-size: 32px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .menu-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .menu-label {
+            color: #888;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .menu-button {
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 16px 24px;
+            font-size: 16px;
+            font-family: inherit;
+            cursor: pointer;
+            transition: transform 0.1s, opacity 0.2s;
+            min-height: 44px;
+        }
+        
+        .menu-button:active {
+            transform: scale(0.95);
+        }
+        
+        .menu-button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        
+        .movement-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+        
+        .movement-button {
+            background: #333;
+            color: #fff;
+            padding: 12px;
+            font-size: 14px;
+        }
+        
+        #hud {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: #fff;
+            font-size: 14px;
+            pointer-events: none;
+            text-shadow: 0 0 4px rgba(0,0,0,0.8);
+        }
+        
+        #hud.hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="game-canvas"></canvas>
+    
+    <div id="menu">
+        <div class="menu-title">Vivaldi Runner</div>
+        
+        <div class="menu-section">
+            <div class="menu-label">Play All</div>
+            <button class="menu-button" data-mode="full">Full Composition</button>
+        </div>
+        
+        <div class="menu-section">
+            <div class="menu-label">Seasons</div>
+            <button class="menu-button" data-mode="season" data-season="Spring">Spring</button>
+            <button class="menu-button" data-mode="season" data-season="Summer">Summer</button>
+            <button class="menu-button" data-mode="season" data-season="Autumn">Autumn</button>
+            <button class="menu-button" data-mode="season" data-season="Winter">Winter</button>
+        </div>
+        
+        <div class="menu-section">
+            <div class="menu-label">Movements</div>
+            <div id="movement-selector" style="display: none;">
+                <div class="movement-buttons">
+                    <button class="menu-button movement-button" data-mode="movement" data-movement="1">I</button>
+                    <button class="menu-button movement-button" data-mode="movement" data-movement="2">II</button>
+                    <button class="menu-button movement-button" data-mode="movement" data-movement="3">III</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="hud" class="hidden">
+        <div id="progress-text"></div>
+    </div>
+    
+    <script type="importmap">
+    {
+        "imports": {
+            "tone": "https://esm.sh/tone@15.0.4",
+            "midi-file": "https://esm.sh/midi-file@1.2.4"
+        }
+    }
+    </script>
+    <script type="module" src="js/main.js"></script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"4c6229722a6346bc8eb5cb0e5eae5d41","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>
+
