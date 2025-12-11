@@ -69,14 +69,14 @@ export class LevelAssembler {
         };
     }
     
-    update(cameraX, playerSpeed) {
+    update(cameraX, playerSpeed, cameraWidth) {
         this.worldX += playerSpeed;
         
         // Generate ahead
         this.generateAhead(cameraX);
         
         // Cull behind
-        this.cullBehind(cameraX);
+        this.cullBehind(cameraX, cameraWidth);
         
         // Update enemies
         for (const enemy of this.entities.enemies) {
@@ -157,17 +157,27 @@ export class LevelAssembler {
         }
     }
     
-    cullBehind(cameraX) {
+    cullBehind(cameraX, cameraWidth) {
         const cullDistance = cameraX - MAPPING_RULES.game.cullBehindDistance;
         
         for (const key in this.entities) {
             this.entities[key] = this.entities[key].filter(entity => {
-                // Backgrounds get extra leeway so they remain visible until well off-screen
-                const effectiveCullDistance = key === 'backgrounds'
-                    ? cameraX - MAPPING_RULES.game.cullBehindDistance * 2
-                    : cullDistance;
                 
-                if (entity.x < effectiveCullDistance) {
+                if (key === 'backgrounds') {
+                    // Culling for backgrounds must account for parallax movement.
+                    // ScreenX = WorldX - CameraX * Parallax
+                    const screenX = entity.x - (cameraX * entity.parallax);
+                    
+                    // Cull if the entity is well past the left side of the screen (e.g., more than one full width off)
+                    if (screenX < -cameraWidth) { 
+                         this.backgroundPool.release(entity);
+                         return false;
+                    }
+                    return true;
+                }
+
+                // Culling for foreground elements (platforms, obstacles, enemies)
+                if (entity.x < cullDistance) {
                     switch(key) {
                         case 'platforms':
                             this.platformPool.release(entity);
@@ -177,9 +187,6 @@ export class LevelAssembler {
                             break;
                         case 'enemies':
                             this.enemyPool.release(entity);
-                            break;
-                        case 'backgrounds':
-                            this.backgroundPool.release(entity);
                             break;
                     }
                     return false;

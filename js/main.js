@@ -222,7 +222,7 @@ class Game {
         this.camera.follow(this.player);
         
         // Update level generation
-        this.levelAssembler.update(this.camera.x, this.player.vx);
+        this.levelAssembler.update(this.camera.x, this.player.vx, this.camera.width);
         
         // Update maestro
         this.maestro.update(this.player, this.camera.x);
