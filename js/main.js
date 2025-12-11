@@ -183,9 +183,8 @@ class Game {
             return;
         }
         
-        // Update player (constant rightward movement)
-        const platforms = this.levelAssembler.getPlatforms();
-        this.player.update(MAPPING_RULES.game.gravity, platforms);
+        // Update player (constant rightward movement, no gravity/platforms)
+        this.player.update(0, []);
         
         // Check collisions with obstacles
         const obstacles = this.levelAssembler.getObstacles();
