@@ -4,20 +4,36 @@ export class Player {
         this.y = y;
         this.width = 30;
         this.height = 40;
-        this.vx = 0;
+        this.vx = 2.5; // Constant rightward movement
         this.vy = 0;
         this.onGround = false;
-        this.alive = true;
         this.trail = [];
+        this.invincibilityTimer = 0;
+        this.invincibilityDuration = 1000; // ms
+        this.stalledTimer = 0;
+        this.stalledDuration = 500; // ms
+        this.lastDamageTime = 0;
     }
 
-    update(gravity, platforms) {
+    update(gravity, platforms, deltaTime = 16) {
+        // Update invincibility timer
+        if (this.invincibilityTimer > 0) {
+            this.invincibilityTimer -= deltaTime;
+        }
+
+        // Update stalled timer
+        if (this.stalledTimer > 0) {
+            this.stalledTimer -= deltaTime;
+        }
+
         // Apply gravity
         this.vy += gravity;
 
-        // Update position
+        // Update position (constant movement to right, unless stalled)
         this.y += this.vy;
-        this.x += this.vx;
+        if (this.stalledTimer <= 0) {
+            this.x += this.vx;
+        }
 
         // Trail effect
         if (this.vx > 0 && Math.random() > 0.5) {
@@ -50,10 +66,24 @@ export class Player {
             }
         }
 
-        // Die if fall off screen
-        if (this.y > 1000) {
-            this.alive = false;
+        // Reset to ground if fall way off screen
+        if (this.y > 2000) {
+            this.y = -100;
         }
+    }
+    
+    takeDamage() {
+        // Only stall if not currently invincible
+        if (this.invincibilityTimer <= 0) {
+            this.stalledTimer = this.stalledDuration;
+            this.invincibilityTimer = this.invincibilityDuration;
+            return true; // Was hit
+        }
+        return false; // Was invincible
+    }
+    
+    isInvincible() {
+        return this.invincibilityTimer > 0;
     }
 
     collidesWithPlatform(platform) {
@@ -83,7 +113,12 @@ export class Player {
         }
         ctx.restore();
 
-        ctx.fillStyle = '#000';
+        // Invincibility flash
+        if (this.isInvincible() && Math.floor(this.invincibilityTimer / 100) % 2 === 0) {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        } else {
+            ctx.fillStyle = '#000';
+        }
         ctx.fillRect(screen.x, screen.y, this.width, this.height);
 
         // Simple face

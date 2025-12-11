@@ -89,6 +89,13 @@ class Game {
             e.preventDefault();
             this.touchActive = false;
         });
+        
+        // Mobile jump fallback (tap screen)
+        this.canvas.addEventListener('click', (e) => {
+            if (this.player && this.isRunning) {
+                this.player.jump(MAPPING_RULES.game.jumpForce);
+            }
+        });
     }
     
     async startGame(mode, season, movement) {
@@ -169,35 +176,28 @@ class Game {
     }
     
     update() {
-        if (!this.player || !this.player.alive) {
+        if (!this.player) {
             this.returnToMenu();
             return;
         }
         
-        // Player input
-        if (this.keys['ArrowRight'] || this.keys['d'] || this.touchActive) {
-            this.player.vx = MAPPING_RULES.game.playerSpeed;
-        } else {
-            this.player.vx = 0;
-        }
-        
-        // Update player
+        // Update player (constant rightward movement)
         const platforms = this.levelAssembler.getPlatforms();
         this.player.update(MAPPING_RULES.game.gravity, platforms);
         
-        // Check collisions
+        // Check collisions with obstacles
         const obstacles = this.levelAssembler.getObstacles();
-        const enemies = this.levelAssembler.getEnemies();
-        
         for (const obstacle of obstacles) {
             if (obstacle.collidesWith(this.player)) {
-                this.player.alive = false;
+                this.player.takeDamage();
             }
         }
         
+        // Check collisions with enemies
+        const enemies = this.levelAssembler.getEnemies();
         for (const enemy of enemies) {
             if (enemy.collidesWith(this.player)) {
-                this.player.alive = false;
+                this.player.takeDamage();
             }
         }
         
