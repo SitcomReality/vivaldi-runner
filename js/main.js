@@ -45,8 +45,13 @@ class Game {
     }
     
     resizeCanvas() {
+        const desiredHeight = 320; // Consistent game strip height in pixels
+        const height = Math.min(desiredHeight, window.innerHeight);
+        
         this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
+        this.canvas.height = height;
+        this.canvas.style.height = `${height}px`;
+        
         // Only update camera if it exists yet (resizeCanvas is called during construction before camera is created)
         if (this.camera) {
             this.camera.update(this.canvas.width, this.canvas.height);
