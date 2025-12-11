@@ -45,8 +45,13 @@ class Game {
     }
     
     resizeCanvas() {
+        const desiredHeight = 320; // Consistent game strip height in pixels
+        const height = Math.min(desiredHeight, window.innerHeight);
+        
         this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
+        this.canvas.height = height;
+        this.canvas.style.height = `${height}px`;
+        
         // Only update camera if it exists yet (resizeCanvas is called during construction before camera is created)
         if (this.camera) {
             this.camera.update(this.canvas.width, this.canvas.height);
@@ -60,39 +65,38 @@ class Game {
     setupInput() {
         // Keyboard
         window.addEventListener('keydown', (e) => {
-            // store by code for consistency across layouts
-            this.keys[e.code] = true;
-
-            // Reliable Space detection using e.code; prevent default so page doesn't scroll
-            if (e.code === 'Space' && this.player) {
+            this.keys[e.key] = true;
+            
+            // Use e.code for reliable Space detection and prevent default so page doesn't scroll
+            if ((e.key === ' ' || e.code === 'Space') && this.player) {
                 e.preventDefault();
                 this.player.jump(MAPPING_RULES.game.jumpForce);
             }
-
-            if (e.code === 'Escape') {
+            
+            if (e.key === 'Escape') {
                 this.returnToMenu();
             }
         });
-
+        
         window.addEventListener('keyup', (e) => {
-            this.keys[e.code] = false;
+            this.keys[e.key] = false;
         });
-
+        
         // Touch (for mobile)
         this.canvas.addEventListener('touchstart', (e) => {
             e.preventDefault();
             this.touchActive = true;
-
+            
             if (this.player) {
                 this.player.jump(MAPPING_RULES.game.jumpForce);
             }
         });
-
+        
         this.canvas.addEventListener('touchend', (e) => {
             e.preventDefault();
             this.touchActive = false;
         });
-
+        
         // Mobile jump fallback (tap screen)
         this.canvas.addEventListener('click', (e) => {
             if (this.player && this.isRunning) {
@@ -184,9 +188,19 @@ class Game {
             return;
         }
         
-        // Update player (constant rightward movement)
-        const platforms = this.levelAssembler.getPlatforms();
-        this.player.update(MAPPING_RULES.game.gravity, platforms);
+        // Handle vertical input (W / ArrowUp = up, S / ArrowDown = down)
+        const verticalSpeed = 3.5; // pixels per frame
+        if (this.keys['w'] || this.keys['W'] || this.keys['ArrowUp']) {
+            this.player.y -= verticalSpeed;
+        }
+        if (this.keys['s'] || this.keys['S'] || this.keys['ArrowDown']) {
+            this.player.y += verticalSpeed;
+        }
+        // Clamp player to canvas bounds (stay inside game strip)
+        this.player.y = Math.max(0, Math.min(this.canvas.height - this.player.height, this.player.y));
+        
+        // Update player (constant rightward movement, no gravity/platforms)
+        this.player.update(0, []);
         
         // Check collisions with obstacles
         const obstacles = this.levelAssembler.getObstacles();

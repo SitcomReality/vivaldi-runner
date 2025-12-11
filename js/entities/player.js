@@ -5,8 +5,6 @@ export class Player {
         this.width = 30;
         this.height = 40;
         this.vx = 2.5; // Constant rightward movement
-        this.vy = 0;
-        this.onGround = false;
         this.trail = [];
         this.invincibilityTimer = 0;
         this.invincibilityDuration = 1000; // ms
@@ -15,7 +13,8 @@ export class Player {
         this.lastDamageTime = 0;
     }
 
-    update(gravity, platforms, deltaTime = 16) {
+    // Gravity/platforms are ignored now; the player just flies horizontally.
+    update(_gravity, _platforms, deltaTime = 16) {
         // Update invincibility timer
         if (this.invincibilityTimer > 0) {
             this.invincibilityTimer -= deltaTime;
@@ -26,11 +25,7 @@ export class Player {
             this.stalledTimer -= deltaTime;
         }
 
-        // Apply gravity
-        this.vy += gravity;
-
-        // Update position (constant movement to right, unless stalled)
-        this.y += this.vy;
+        // Horizontal movement (unless stalled)
         if (this.stalledTimer <= 0) {
             this.x += this.vx;
         }
@@ -39,7 +34,7 @@ export class Player {
         if (this.vx > 0 && Math.random() > 0.5) {
             this.trail.push({
                 x: this.x,
-                y: this.y + this.height/2,
+                y: this.y + this.height / 2,
                 alpha: 0.8,
                 life: 20
             });
@@ -52,23 +47,6 @@ export class Player {
             if (this.trail[i].life <= 0) {
                 this.trail.splice(i, 1);
             }
-        }
-
-        // Platform collision
-        this.onGround = false;
-        for (const platform of platforms) {
-            if (this.collidesWithPlatform(platform)) {
-                // Land on platform
-                this.y = platform.y - this.height;
-                this.vy = 0;
-                this.onGround = true;
-                break;
-            }
-        }
-
-        // Reset to ground if fall way off screen
-        if (this.y > 2000) {
-            this.y = -100;
         }
     }
     
@@ -86,19 +64,9 @@ export class Player {
         return this.invincibilityTimer > 0;
     }
 
-    collidesWithPlatform(platform) {
-        return this.x < platform.x + platform.width &&
-               this.x + this.width > platform.x &&
-               this.y + this.height > platform.y &&
-               this.y + this.height < platform.y + platform.height + this.vy &&
-               this.vy >= 0;
-    }
-
+    // Jump is now an upward nudge in a zero-gravity "flying" space.
     jump(force) {
-        if (this.onGround) {
-            this.vy = -force;
-            this.onGround = false;
-        }
+        this.y -= force * 2;
     }
 
     draw(ctx, camera) {

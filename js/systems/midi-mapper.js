@@ -92,8 +92,8 @@ export class MIDIMapper {
             case 'enemy':
                 return theme.accent;
             case 'background':
-                // ensure background alpha if theme.fg provided as hex
-                return (theme.fg || '#000') + '20'; // Add alpha
+                // Soft pastel background elements, distinct from foreground
+                return '#f3e5f5';
             default:
                 return '#000';
         }
