@@ -54,13 +54,25 @@ export class AudioEngine {
         if (this.isPlaying && !this.isPaused) {
             this.isPaused = true;
             this.pauseTime = Tone.now() - this.startTime;
-            this.sampler.releaseAll();
+            // Guard: only call releaseAll if sampler is initialized and has the method
+            if (this.sampler && typeof this.sampler.releaseAll === 'function') {
+                this.sampler.releaseAll();
+            }
         }
     }
 
     playScratch() {
-        if (this.scratchPlayer && this.scratchPlayer.loaded) {
-            this.scratchPlayer.start();
+        // Guard: ensure scratchPlayer exists and is ready before starting
+        if (this.scratchPlayer) {
+            // Tone.Player exposes a loaded boolean in many builds; fall back to try/catch
+            try {
+                if (this.scratchPlayer.loaded === undefined || this.scratchPlayer.loaded) {
+                    this.scratchPlayer.start();
+                }
+            } catch (e) {
+                // Best-effort: attempt to start anyway
+                try { this.scratchPlayer.start(); } catch (e) { /* ignore */ }
+            }
         }
     }
 
@@ -69,7 +81,10 @@ export class AudioEngine {
         this.isPaused = false;
         this.eventIndex = 0;
         this.timeOffset = 0;
-        this.sampler.releaseAll();
+        // Guard: only call releaseAll if sampler exists
+        if (this.sampler && typeof this.sampler.releaseAll === 'function') {
+            this.sampler.releaseAll();
+        }
     }
 
     update(currentGameTime) {
