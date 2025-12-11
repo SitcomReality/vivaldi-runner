@@ -188,6 +188,17 @@ class Game {
             return;
         }
         
+        // Handle vertical input (W / ArrowUp = up, S / ArrowDown = down)
+        const verticalSpeed = 3.5; // pixels per frame
+        if (this.keys['w'] || this.keys['W'] || this.keys['ArrowUp']) {
+            this.player.y -= verticalSpeed;
+        }
+        if (this.keys['s'] || this.keys['S'] || this.keys['ArrowDown']) {
+            this.player.y += verticalSpeed;
+        }
+        // Clamp player to canvas bounds (stay inside game strip)
+        this.player.y = Math.max(0, Math.min(this.canvas.height - this.player.height, this.player.y));
+        
         // Update player (constant rightward movement, no gravity/platforms)
         this.player.update(0, []);
         
