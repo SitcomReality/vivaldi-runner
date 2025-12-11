@@ -229,8 +229,14 @@ class Game {
     }
     
     render() {
-        // Clear with theme background
-        this.ctx.fillStyle = this.currentTheme.bg;
+        // Clear with seasonal gradient background
+        const theme = this.currentTheme || {};
+        const top = theme.bgTop || theme.bg || '#ffffff';
+        const bottom = theme.bgBottom || theme.bg || '#dddddd';
+        const gradient = this.ctx.createLinearGradient(0, 0, 0, this.canvas.height);
+        gradient.addColorStop(0, top);
+        gradient.addColorStop(1, bottom);
+        this.ctx.fillStyle = gradient;
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         
         // Draw level

@@ -40,8 +40,8 @@ export class MIDIMapper {
         const scale = this.mapVelocityToScale(midiEvent.velocity);
         const length = this.mapVelocityToLength(midiEvent.velocity);
 
-        // Use a per-channel color if defined, otherwise fall back to entity/theme color
-        const channelColor = this.getColorForChannel(midiEvent.channel);
+        // Use a per-channel color if defined (season-aware), otherwise fall back to entity/theme color
+        const channelColor = this.getColorForChannel(midiEvent.channel, theme);
         const fallbackColor = this.getColorForType(entityType, theme);
         const color = channelColor || fallbackColor;
 
@@ -58,8 +58,13 @@ export class MIDIMapper {
         };
     }
 
-    getColorForChannel(channel) {
-        if (this.rules && this.rules.channelColors && this.rules.channelColors[channel] ) {
+    getColorForChannel(channel, theme) {
+        // Prefer season-specific palette if available
+        if (theme && theme.channelPalette && theme.channelPalette[channel]) {
+            return theme.channelPalette[channel];
+        }
+        // Fallback to global channel colors
+        if (this.rules && this.rules.channelColors && this.rules.channelColors[channel]) {
             return this.rules.channelColors[channel];
         }
         return null;
@@ -93,7 +98,7 @@ export class MIDIMapper {
                 return theme.accent;
             case 'background':
                 // Soft pastel background elements, distinct from foreground
-                return '#f3e5f5';
+                return theme && theme.backgroundAccent ? theme.backgroundAccent : '#f3e5f5';
             default:
                 return '#000';
         }
