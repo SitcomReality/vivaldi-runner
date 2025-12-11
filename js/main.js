@@ -67,8 +67,14 @@ class Game {
         window.addEventListener('keydown', (e) => {
             this.keys[e.key] = true;
             
+            // Prevent default for controls that can trigger scrolling/navigation
+            if (e.key === ' ' || e.code === 'Space' || e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key.toLowerCase() === 'w' || e.key.toLowerCase() === 's') {
+                e.preventDefault();
+            }
+            
             // Use e.code for reliable Space detection and prevent default so page doesn't scroll
             if ((e.key === ' ' || e.code === 'Space') && this.player) {
+                // Allow space to still perform an upward nudge for legacy taps (optional)
                 e.preventDefault();
                 this.player.jump(MAPPING_RULES.game.jumpForce);
             }
