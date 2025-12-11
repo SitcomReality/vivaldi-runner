@@ -62,7 +62,9 @@ class Game {
         window.addEventListener('keydown', (e) => {
             this.keys[e.key] = true;
             
-            if (e.key === ' ' && this.player) {
+            // Use e.code for reliable Space detection and prevent default so page doesn't scroll
+            if ((e.key === ' ' || e.code === 'Space') && this.player) {
+                e.preventDefault();
                 this.player.jump(MAPPING_RULES.game.jumpForce);
             }
             

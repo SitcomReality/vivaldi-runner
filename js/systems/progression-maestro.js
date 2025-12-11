@@ -30,7 +30,9 @@ export class ProgressionMaestro {
 
         // Check if player is moving forward
         const wasMoving = this.playerMoving;
-        this.playerMoving = player.alive && player.vx > 0;
+        // Replace invalid 'player.alive' check with a robust check that player exists and has positive vx,
+        // and is not currently stalled (stalledTimer > 0 indicates a temporary stop)
+        this.playerMoving = !!player && (player.vx > 0) && (player.stalledTimer <= 0);
 
         // Handle audio based on movement state
         if (this.playerMoving && !wasMoving) {
