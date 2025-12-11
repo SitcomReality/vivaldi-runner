@@ -45,13 +45,8 @@ class Game {
     }
     
     resizeCanvas() {
-        const desiredHeight = 320; // Consistent game strip height in pixels
-        const height = Math.min(desiredHeight, window.innerHeight);
-        
         this.canvas.width = window.innerWidth;
-        this.canvas.height = height;
-        this.canvas.style.height = `${height}px`;
-        
+        this.canvas.height = window.innerHeight;
         // Only update camera if it exists yet (resizeCanvas is called during construction before camera is created)
         if (this.camera) {
             this.camera.update(this.canvas.width, this.canvas.height);
@@ -67,14 +62,8 @@ class Game {
         window.addEventListener('keydown', (e) => {
             this.keys[e.key] = true;
             
-            // Prevent default for controls that can trigger scrolling/navigation
-            if (e.key === ' ' || e.code === 'Space' || e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key.toLowerCase() === 'w' || e.key.toLowerCase() === 's') {
-                e.preventDefault();
-            }
-            
             // Use e.code for reliable Space detection and prevent default so page doesn't scroll
             if ((e.key === ' ' || e.code === 'Space') && this.player) {
-                // Allow space to still perform an upward nudge for legacy taps (optional)
                 e.preventDefault();
                 this.player.jump(MAPPING_RULES.game.jumpForce);
             }
@@ -193,17 +182,6 @@ class Game {
             this.returnToMenu();
             return;
         }
-        
-        // Handle vertical input (W / ArrowUp = up, S / ArrowDown = down)
-        const verticalSpeed = 3.5; // pixels per frame
-        if (this.keys['w'] || this.keys['W'] || this.keys['ArrowUp']) {
-            this.player.y -= verticalSpeed;
-        }
-        if (this.keys['s'] || this.keys['S'] || this.keys['ArrowDown']) {
-            this.player.y += verticalSpeed;
-        }
-        // Clamp player to canvas bounds (stay inside game strip)
-        this.player.y = Math.max(0, Math.min(this.canvas.height - this.player.height, this.player.y));
         
         // Update player (constant rightward movement, no gravity/platforms)
         this.player.update(0, []);

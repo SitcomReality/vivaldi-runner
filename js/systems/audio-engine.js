@@ -11,12 +11,11 @@ export class AudioEngine {
         this.pauseTime = 0;
         this.timeOffset = 0;
         this.scratchPlayer = null;
-        this._toneStarted = false; // track whether Tone.start() has been called
     }
 
     async init() {
-        // Do NOT call Tone.start() here — browsers require a user gesture.
-        // We'll start Tone upon the first play() call.
+        await Tone.start();
+
         // Create a simple sampler for MIDI playback
         this.sampler = new Tone.Sampler({
             urls: {
@@ -38,26 +37,12 @@ export class AudioEngine {
         await Tone.loaded();
     }
 
-    async _ensureStarted() {
-        if (!this._toneStarted) {
-            try {
-                await Tone.start();
-            } catch (e) {
-                // If start fails, ignore — best-effort
-            }
-            this._toneStarted = true;
-        }
-    }
-
     loadEvents(midiEvents) {
         this.currentEvents = midiEvents.filter(e => e.type === 'noteOn');
         this.eventIndex = 0;
     }
 
-    async play() {
-        // Ensure Tone has been started from a user gesture before scheduling audio
-        await this._ensureStarted();
-
+    play() {
         if (!this.isPlaying) {
             this.isPlaying = true;
             this.isPaused = false;
