@@ -27,8 +27,12 @@ export class AudioEngine {
             release: 1,
         }).toDestination();
 
-        // Load scratch effect
+        // Load scratch effect (attenuated)
         this.scratchPlayer = new Tone.Player("/scratch.mp3").toDestination();
+        // Reduce scratch volume significantly so it's not jarring during testing
+        if (this.scratchPlayer && this.scratchPlayer.volume && typeof this.scratchPlayer.volume.value === 'number') {
+            this.scratchPlayer.volume.value = -18; // -18 dB quieter
+        }
 
         await Tone.loaded();
     }
