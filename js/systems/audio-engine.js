@@ -10,6 +10,7 @@ export class AudioEngine {
         this.startTime = 0;
         this.pauseTime = 0;
         this.timeOffset = 0;
+        this.scratchPlayer = null;
     }
 
     async init() {
@@ -25,6 +26,9 @@ export class AudioEngine {
             },
             release: 1,
         }).toDestination();
+
+        // Load scratch effect
+        this.scratchPlayer = new Tone.Player("/scratch.mp3").toDestination();
 
         await Tone.loaded();
     }
@@ -50,6 +54,13 @@ export class AudioEngine {
         if (this.isPlaying && !this.isPaused) {
             this.isPaused = true;
             this.pauseTime = Tone.now() - this.startTime;
+            this.sampler.releaseAll();
+        }
+    }
+
+    playScratch() {
+        if (this.scratchPlayer && this.scratchPlayer.loaded) {
+            this.scratchPlayer.start();
         }
     }
 

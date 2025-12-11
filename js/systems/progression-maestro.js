@@ -18,6 +18,7 @@ export class ProgressionMaestro {
 
     pause() {
         this.audioEngine.pause();
+        this.audioEngine.playScratch();
     }
 
     resume() {

@@ -108,6 +108,7 @@ class Game {
         
         // Setup game
         this.player = new Player(200, 100);
+        this.levelAssembler.setSeason(this.currentSeason);
         this.levelAssembler.loadGameEvents(gameEvents);
         this.audioEngine.loadEvents(midiEvents);
         

@@ -8,6 +8,7 @@ export class Player {
         this.vy = 0;
         this.onGround = false;
         this.alive = true;
+        this.trail = [];
     }
 
     update(gravity, platforms) {
@@ -17,6 +18,25 @@ export class Player {
         // Update position
         this.y += this.vy;
         this.x += this.vx;
+
+        // Trail effect
+        if (this.vx > 0 && Math.random() > 0.5) {
+            this.trail.push({
+                x: this.x,
+                y: this.y + this.height/2,
+                alpha: 0.8,
+                life: 20
+            });
+        }
+        
+        // Update trail
+        for (let i = this.trail.length - 1; i >= 0; i--) {
+            this.trail[i].life--;
+            this.trail[i].alpha = this.trail[i].life / 20;
+            if (this.trail[i].life <= 0) {
+                this.trail.splice(i, 1);
+            }
+        }
 
         // Platform collision
         this.onGround = false;
@@ -53,6 +73,15 @@ export class Player {
 
     draw(ctx, camera) {
         const screen = camera.worldToScreen(this.x, this.y);
+
+        // Draw trail
+        ctx.save();
+        for (const particle of this.trail) {
+            const pScreen = camera.worldToScreen(particle.x, particle.y);
+            ctx.fillStyle = `rgba(255, 255, 255, ${particle.alpha})`;
+            ctx.fillRect(pScreen.x, pScreen.y, 4, 4);
+        }
+        ctx.restore();
 
         ctx.fillStyle = '#000';
         ctx.fillRect(screen.x, screen.y, this.width, this.height);

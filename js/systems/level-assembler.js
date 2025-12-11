@@ -11,6 +11,7 @@ export class LevelAssembler {
         this.gameEvents = [];
         this.eventIndex = 0;
         this.worldX = 0;
+        this.currentSeason = 'Spring';
         
         // Object pools
         this.platformPool = new ObjectPool(
@@ -48,6 +49,10 @@ export class LevelAssembler {
         this.addGroundPlatform();
     }
     
+    setSeason(season) {
+        this.currentSeason = season;
+    }
+    
     loadGameEvents(events) {
         this.gameEvents = events;
         this.eventIndex = 0;
@@ -74,9 +79,10 @@ export class LevelAssembler {
         ground.init(
             0,
             this.canvasHeight * MAPPING_RULES.game.groundLevel,
-            10000,
+            100000, // Make ground much longer
             0,
-            '#111'
+            '#111',
+            this.currentSeason
         );
         this.entities.platforms.push(ground);
     }
@@ -116,7 +122,7 @@ export class LevelAssembler {
         switch(event.type) {
             case 'platform':
                 const platform = this.platformPool.acquire();
-                platform.init(x, y, event.length, event.note, event.color);
+                platform.init(x, y, event.length, event.note, event.color, this.currentSeason);
                 this.entities.platforms.push(platform);
                 break;
                 
