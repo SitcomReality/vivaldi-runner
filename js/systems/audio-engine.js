@@ -47,10 +47,13 @@ export class AudioEngine {
             this.isPlaying = true;
             this.isPaused = false;
             this.startTime = Tone.now() - this.timeOffset;
+            // Ensure Tone.Transport is running so scheduled audio/time references work reliably
+            try { Tone.Transport.start(); } catch (e) { /* ignore if already started */ }
         } else if (this.isPaused) {
             this.isPaused = false;
             this.timeOffset = this.pauseTime;
             this.startTime = Tone.now() - this.timeOffset;
+            try { Tone.Transport.start(); } catch (e) { /* ignore */ }
         }
     }
 
@@ -58,6 +61,9 @@ export class AudioEngine {
         if (this.isPlaying && !this.isPaused) {
             this.isPaused = true;
             this.pauseTime = Tone.now() - this.startTime;
+            // Pause the transport so scheduled timing halts
+            try { Tone.Transport.pause(); } catch (e) { /* ignore */ }
+
             // Guard: only call releaseAll if sampler is initialized and has the method
             if (this.sampler && typeof this.sampler.releaseAll === 'function') {
                 this.sampler.releaseAll();
@@ -85,6 +91,9 @@ export class AudioEngine {
         this.isPaused = false;
         this.eventIndex = 0;
         this.timeOffset = 0;
+        // Stop the transport to fully halt scheduling
+        try { Tone.Transport.stop(); } catch (e) { /* ignore */ }
+
         // Guard: only call releaseAll if sampler exists
         if (this.sampler && typeof this.sampler.releaseAll === 'function') {
             this.sampler.releaseAll();

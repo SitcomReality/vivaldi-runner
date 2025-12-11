@@ -60,38 +60,39 @@ class Game {
     setupInput() {
         // Keyboard
         window.addEventListener('keydown', (e) => {
-            this.keys[e.key] = true;
-            
-            // Use e.code for reliable Space detection and prevent default so page doesn't scroll
-            if ((e.key === ' ' || e.code === 'Space') && this.player) {
+            // store by code for consistency across layouts
+            this.keys[e.code] = true;
+
+            // Reliable Space detection using e.code; prevent default so page doesn't scroll
+            if (e.code === 'Space' && this.player) {
                 e.preventDefault();
                 this.player.jump(MAPPING_RULES.game.jumpForce);
             }
-            
-            if (e.key === 'Escape') {
+
+            if (e.code === 'Escape') {
                 this.returnToMenu();
             }
         });
-        
+
         window.addEventListener('keyup', (e) => {
-            this.keys[e.key] = false;
+            this.keys[e.code] = false;
         });
-        
+
         // Touch (for mobile)
         this.canvas.addEventListener('touchstart', (e) => {
             e.preventDefault();
             this.touchActive = true;
-            
+
             if (this.player) {
                 this.player.jump(MAPPING_RULES.game.jumpForce);
             }
         });
-        
+
         this.canvas.addEventListener('touchend', (e) => {
             e.preventDefault();
             this.touchActive = false;
         });
-        
+
         // Mobile jump fallback (tap screen)
         this.canvas.addEventListener('click', (e) => {
             if (this.player && this.isRunning) {
@@ -183,8 +184,9 @@ class Game {
             return;
         }
         
-        // Update player (constant rightward movement, no gravity/platforms)
-        this.player.update(0, []);
+        // Update player (constant rightward movement)
+        const platforms = this.levelAssembler.getPlatforms();
+        this.player.update(MAPPING_RULES.game.gravity, platforms);
         
         // Check collisions with obstacles
         const obstacles = this.levelAssembler.getObstacles();
