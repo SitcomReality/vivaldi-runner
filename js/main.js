@@ -47,7 +47,10 @@ class Game {
     resizeCanvas() {
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
-        this.camera.update(this.canvas.width, this.canvas.height);
+        // Only update camera if it exists yet (resizeCanvas is called during construction before camera is created)
+        if (this.camera) {
+            this.camera.update(this.canvas.width, this.canvas.height);
+        }
         
         if (this.levelAssembler) {
             this.levelAssembler.canvasHeight = this.canvas.height;
