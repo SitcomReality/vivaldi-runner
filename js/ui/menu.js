@@ -14,6 +14,14 @@ export class Menu {
             this.startGame('full', null, null);
         });
 
+        // Can-can button
+        const cancanButton = this.menuEl.querySelector('[data-mode="cancan"]');
+        if (cancanButton) {
+            cancanButton.addEventListener('click', () => {
+                this.startGame('cancan', 'CanCan', 1);
+            });
+        }
+
         // Season buttons
         const seasonButtons = this.menuEl.querySelectorAll('[data-mode="season"]');
         seasonButtons.forEach(btn => {

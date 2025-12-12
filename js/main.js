@@ -115,7 +115,7 @@ class Game {
         const file = files[0];
         this.currentSeason = file.season;
         this.currentMovement = file.movement;
-        this.currentTheme = MAPPING_RULES.seasonThemes[file.season];
+        this.currentTheme = MAPPING_RULES.seasonThemes[file.season] || MAPPING_RULES.seasonThemes.Spring;
         
         // Load and parse MIDI
         const midiEvents = await this.midiParser.loadFile(file.path);

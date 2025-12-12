@@ -13,7 +13,21 @@ export class HUD {
     }
     
     update(current, season, movement) {
-        this.progressEl.textContent = `${season} - Movement ${movement}`;
+        if (!season) {
+            this.progressEl.textContent = '';
+            return;
+        }
+
+        if (season === 'CanCan') {
+            this.progressEl.textContent = 'Can-can';
+            return;
+        }
+
+        if (movement != null) {
+            this.progressEl.textContent = `${season} - Movement ${movement}`;
+        } else {
+            this.progressEl.textContent = season;
+        }
     }
 }
 

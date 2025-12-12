@@ -157,6 +157,33 @@ export const MAPPING_RULES = {
                 15: '#bf360c'
             }
         },
+        CanCan: {
+            // Punchy, playful stage-light gradient
+            bgTop: '#fff8e1',
+            bgBottom: '#ffecb3',
+            bg: '#fffbdd',
+            fg: '#c62828',          // strong red for main lines
+            accent: '#f9a825',      // punchy yellow for obstacles/enemies
+            backgroundAccent: '#ffe082', // soft spotlight glow
+            channelPalette: {
+                0: '#c62828',  // lead - vivid red
+                1: '#ad1457',  // counter - magenta
+                2: '#283593',  // bass - deep blue
+                3: '#f9a825',  // enemies - bright yellow
+                4: '#6a1b9a',
+                5: '#00897b',
+                6: '#d81b60',
+                7: '#ff8f00',
+                8: '#4e342e',
+                9: '#8d6e63',
+                10: '#2e7d32',
+                11: '#039be5',
+                12: '#ef6c00',
+                13: '#7b1fa2',
+                14: '#00acc1',
+                15: '#bf360c'
+            }
+        },
         Winter: {
             // Cool, crisp winter sky
             bgTop: '#e3f2fd',
