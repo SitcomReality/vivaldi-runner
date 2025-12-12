@@ -168,6 +168,13 @@ class Game {
                 season: season,
                 movement: parseInt(movement)
             });
+        } else if (mode === 'cancan') {
+            // Single Can-can file (explicit path)
+            files.push({
+                path: `/midi/can-can.mid`,
+                season: 'CanCan',
+                movement: 1
+            });
         }
         
         return files;
